@@ -3,9 +3,9 @@
 #include "TGraphErrors.h"
 #include "TLegend.h"
 #include "TMath.h"
-Double_t ris_sin(double *x, double *par) {
+Double_t ris_sin_cond(double *x, double *par) {
   Double_t res =
-      par[0] * par[1] /
+      par[0]/
       (TMath::Sqrt(par[1] * par[1] +
                    TMath::Power(2. * TMath::Pi() * x[0] * par[2] -
                                     1 / (par[3] * 2. * TMath::Pi() * x[0]),
@@ -15,10 +15,10 @@ Double_t ris_sin(double *x, double *par) {
 }
 
 void fit(TString fname = "V_ind_sweep_noresistenza_0,1Vpp.txt",
-         Double_t f0 = 12780, Double_t V0 = 0.1, Double_t R = 290,
+         Double_t f0 = 12780, Double_t V0 = 0.05, Double_t R = 290,
          Double_t L = 0.047, Double_t C = 3.3E-9) {
   TFile *file = new TFile("data.root", "RECREATE");
-  TF1 *resonance = new TF1("myfunc", ris_sin, 200, 24000, 4);
+  TF1 *resonance = new TF1("myfunc", ris_sin_cond, 200, 24000, 4);
   resonance->SetParameter(0, V0);
   resonance->SetParameter(1, R);
   resonance->SetParameter(2, L);
@@ -27,6 +27,7 @@ void fit(TString fname = "V_ind_sweep_noresistenza_0,1Vpp.txt",
   resonance->SetParName(1, "Resistenza");
   resonance->SetParName(2, "Induttanza");
   resonance->SetParName(3, "Capacità");
+  //resonance->FixParameter(0,0.05);
 
   TGraphErrors *data = new TGraphErrors(fname, "%lg %lg %lg");
 
@@ -49,6 +50,7 @@ void fit(TString fname = "V_ind_sweep_noresistenza_0,1Vpp.txt",
   leg->Draw();
   data->Write();
   file->Close();
+  std::cout<<"La f di risonanza vale: "<<TMath::Sqrt(1/(2*TMath::Pi()*resonance->GetParameter(2)*resonance->GetParameter(3)))<<"\n";
 }
 
 void my_data(TString fname = "V_ind_sweep_noresistenza_0,1Vpp.txt") {
