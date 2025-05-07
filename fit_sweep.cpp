@@ -5,12 +5,32 @@
 #include "TMath.h"
 Double_t ris_sin_cond(double *x, double *par) {
   Double_t res =
-      par[0]/
+      par[0] /
       (TMath::Sqrt(par[1] * par[1] +
                    TMath::Power(2. * TMath::Pi() * x[0] * par[2] -
                                     1 / (par[3] * 2. * TMath::Pi() * x[0]),
                                 2)) *
        2. * TMath::Pi() * x[0] * par[3]);
+  return res;
+}
+
+Double_t ris_sin_res(double *x, double *par) {
+  Double_t res =
+      par[0] * par[1] /
+      (TMath::Sqrt(par[1] * par[1] +
+                   TMath::Power(2. * TMath::Pi() * x[0] * par[2] -
+                                    1 / (par[3] * 2. * TMath::Pi() * x[0]),
+                                2)));
+  return res;
+}
+
+Double_t ris_sin_ind(double *x, double *par) {
+  Double_t res =
+      par[0] * par[2] * 2 * TMath::Pi() * x[0] /
+      (TMath::Sqrt(par[1] * par[1] +
+                   TMath::Power(2. * TMath::Pi() * x[0] * par[2] -
+                                    1 / (par[3] * 2. * TMath::Pi() * x[0]),
+                                2)));
   return res;
 }
 
@@ -27,7 +47,7 @@ void fit(TString fname = "V_ind_sweep_noresistenza_0,1Vpp.txt",
   resonance->SetParName(1, "Resistenza");
   resonance->SetParName(2, "Induttanza");
   resonance->SetParName(3, "Capacità");
-  //resonance->FixParameter(0,0.05);
+  // resonance->FixParameter(0,0.05);
 
   TGraphErrors *data = new TGraphErrors(fname, "%lg %lg %lg");
 
@@ -50,7 +70,10 @@ void fit(TString fname = "V_ind_sweep_noresistenza_0,1Vpp.txt",
   leg->Draw();
   data->Write();
   file->Close();
-  std::cout<<"La f di risonanza vale: "<<TMath::Sqrt(1/(2*TMath::Pi()*resonance->GetParameter(2)*resonance->GetParameter(3)))<<"\n";
+  std::cout << "La f di risonanza vale: "
+            << TMath::Sqrt(1 / (2 * TMath::Pi() * resonance->GetParameter(2) *
+                                resonance->GetParameter(3)))
+            << "\n";
 }
 
 void my_data(TString fname = "V_ind_sweep_noresistenza_0,1Vpp.txt") {
