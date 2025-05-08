@@ -81,9 +81,9 @@ void my_data(TString fname = "V_ind_sweep_noresistenza_0,1Vpp.txt") {
   data->Draw("AP");
   data->SetLineColor(4);
   data->SetMarkerColor(4);
-  data->SetTitle("Figura di diffrazione");
-  data->GetXaxis()->SetTitle("Posizione, m");
-  data->GetYaxis()->SetTitle("Int. luminosa, unit. arb.");
+  data->SetTitle("Andamento della tensione");
+  data->GetXaxis()->SetTitle("Frequenza, Hz");
+  data->GetYaxis()->SetTitle("Ampiezza, V");
   data->GetXaxis()->CenterTitle(true);
   data->GetXaxis()->CenterTitle(true);
 }
