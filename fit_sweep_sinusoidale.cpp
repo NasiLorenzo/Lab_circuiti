@@ -35,9 +35,9 @@ Double_t ris_sin_ind(double *x, double *par) {
   return res;
 }
 
-void fit(TString fname_cond = "V_cond_sin_sweep_1.5vpp_errori_stand.txt",
-         TString fname_res = "V_res_sweep_sin_1.5vpp_errori_stand.txt",
-         TString fname_ind = "V_ind_sweep_1.5vpp_errori_stand.txt",
+void fit(TString fname_cond = "V_cond_sweep_1,5Vpp_metodo_automatico.txt",
+         TString fname_res = "V_res_sweep_1,5Vpp_metodo_automatico.txt",
+         TString fname_ind = "V_ind_sweep_1,5Vpp_metodo_automatico.txt",
          Double_t f0 = 12780, Double_t V0 = 0.05, Double_t R = 600,
          Double_t L = 0.047, Double_t C = 3.3E-9) {
   TFile *file = new TFile("data_cond.root", "RECREATE");
@@ -121,16 +121,4 @@ void fit(TString fname_cond = "V_cond_sin_sweep_1.5vpp_errori_stand.txt",
             << TMath::Sqrt(1 / (2 * TMath::Pi() * res_cond->GetParameter(2) *
                                 res_cond->GetParameter(3)))
             << "\n";
-}
-
-void my_data(TString fname = "V_ind_sweep_noresistenza_0,1Vpp.txt") {
-  TGraphErrors *data_cond = new TGraphErrors(fname, "%lg %lg %lg");
-  data_cond->Draw("AP");
-  data_cond->SetLineColor(4);
-  data_cond->SetMarkerColor(4);
-  data_cond->SetTitle("Figura di diffrazione");
-  data_cond->GetXaxis()->SetTitle("Posizione, m");
-  data_cond->GetYaxis()->SetTitle("Int. luminosa, unit. arb.");
-  data_cond->GetXaxis()->CenterTitle(true);
-  data_cond->GetXaxis()->CenterTitle(true);
 }
