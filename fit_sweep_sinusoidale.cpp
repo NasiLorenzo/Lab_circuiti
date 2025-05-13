@@ -35,9 +35,9 @@ Double_t ris_sin_ind(double *x, double *par) {
   return res;
 }
 
-void fit(TString fname_cond = "V_cond_sweep_1,5Vpp_metodo_automatico.txt",
-         TString fname_res = "V_res_sweep_1,5Vpp_metodo_automatico.txt",
-         TString fname_ind = "V_ind_sweep_1,5Vpp_metodo_automatico.txt",
+void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto.txt",
+         TString fname_res = "./nuovi_txt/V_res_1,5_auto.txt",
+         TString fname_ind = "./nuovi_txt/V_ind_1,5_auto.txt",
          Double_t f0 = 12780, Double_t V0 = 0.05, Double_t R = 600,
          Double_t L = 0.047, Double_t C = 3.3E-9) {
   TFile *file = new TFile("data_cond.root", "RECREATE");
@@ -54,7 +54,7 @@ void fit(TString fname_cond = "V_cond_sweep_1,5Vpp_metodo_automatico.txt",
   res_cond->SetParName(1, "Resistenza");
   res_cond->SetParName(2, "Induttanza");
   res_cond->SetParName(3, "Capacità");
-  res_cond->FixParameter(0,0.75);
+  //res_cond->FixParameter(0,0.75);
 
   res_ind->SetParameter(0, V0);
   res_ind->SetParameter(1, R);
@@ -64,7 +64,7 @@ void fit(TString fname_cond = "V_cond_sweep_1,5Vpp_metodo_automatico.txt",
   res_ind->SetParName(1, "Resistenza");
   res_ind->SetParName(2, "Induttanza");
   res_ind->SetParName(3, "Capacità");
-  res_ind->FixParameter(0,0.75);
+  //res_ind->FixParameter(0,0.75);
 
   res_res->SetParameter(0, V0);
   res_res->SetParameter(1, R);
