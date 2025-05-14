@@ -40,7 +40,7 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto.txt",
          TString fname_ind = "./nuovi_txt/V_ind_1,5_auto.txt",
          Double_t f0 = 12780, Double_t V0 = 0.05, Double_t R = 600,
          Double_t L = 0.047, Double_t C = 3.3E-9) {
-  TFile *file = new TFile("data_cond.root", "RECREATE");
+  TFile *file = new TFile("data_sin.root", "RECREATE");
   TCanvas *canv = new TCanvas("canv", "Risonanze sinusoidale", 700, 600);
   canv->Divide(2, 2);
   TF1 *res_cond = new TF1("myfunc1", ris_sin_cond, 200, 24000, 4);
@@ -102,7 +102,7 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto.txt",
   data_ind->GetYaxis()->SetTitle("Ampiezza, V");
   data_ind->GetXaxis()->CenterTitle(true);
   data_ind->GetXaxis()->CenterTitle(true);
-
+  data_ind->Write();
   res_ind->Draw("same");
 
   data_res->SetTitle("Resistore");
@@ -114,6 +114,7 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto.txt",
   data_res->SetLineColor(4);
   data_res->SetMarkerColor(4);
   res_res->Draw("same");
+  data_res->Write();
   data_cond->Write();
   file->Close();
   std::cout << "La f di risonanza vale: "
