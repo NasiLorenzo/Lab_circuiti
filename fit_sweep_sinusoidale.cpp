@@ -35,10 +35,10 @@ Double_t ris_sin_ind(double *x, double *par) {
   return res;
 }
 
-void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto.txt",
-         TString fname_res = "./nuovi_txt/V_res_1,5_auto.txt",
-         TString fname_ind = "./nuovi_txt/V_ind_1,5_auto.txt",
-         Double_t f0 = 12780, Double_t V0 = 0.05, Double_t R = 600,
+void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto_errors.txt",
+         TString fname_res = "./nuovi_txt/V_res_1,5_auto_errors.txt",
+         TString fname_ind = "./nuovi_txt/V_ind_1,5_auto_errors.txt",
+         Double_t f0 = 12780, Double_t V0 = 0.75, Double_t R = 600,
          Double_t L = 0.047, Double_t C = 3.3E-9) {
   TFile *file = new TFile("final_data.root", "RECREATE");
   TCanvas *canv = new TCanvas("canv", "Risonanze sinusoidale", 700, 600);
@@ -54,7 +54,7 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto.txt",
   res_cond->SetParName(1, "Resistenza");
   res_cond->SetParName(2, "Induttanza");
   res_cond->SetParName(3, "Capacità");
-  // res_cond->FixParameter(0,0.75);
+  res_cond->FixParameter(1,620.);
 
   res_ind->SetParameter(0, V0);
   res_ind->SetParameter(1, R);
@@ -64,7 +64,7 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto.txt",
   res_ind->SetParName(1, "Resistenza");
   res_ind->SetParName(2, "Induttanza");
   res_ind->SetParName(3, "Capacità");
-  // res_ind->FixParameter(0,0.75);
+  res_ind->FixParameter(1,620.);
 
   res_res->SetParameter(0, V0);
   res_res->SetParameter(1, R);
@@ -74,14 +74,14 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto.txt",
   res_res->SetParName(1, "Resistenza");
   res_res->SetParName(2, "Induttanza");
   res_res->SetParName(3, "Capacità");
-  // res_res->FixParameter(0,0.75);
+  res_res->FixParameter(1,620.);
 
   TGraphErrors *data_cond = new TGraphErrors(fname_cond, "%lg %lg %lg");
   TGraphErrors *data_res = new TGraphErrors(fname_res, "%lg %lg %lg");
   TGraphErrors *data_ind = new TGraphErrors(fname_ind, "%lg %lg %lg");
 
   canv->cd(1);
-  data_cond->Fit("myfunc1", "R");
+  data_cond->Fit("myfunc1", "E");
   data_cond->Draw("AP");
   data_cond->SetLineColor(4);
   data_cond->SetMarkerColor(4);
@@ -93,7 +93,7 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto.txt",
   data_cond->GetXaxis()->CenterTitle(true);
 
   canv->cd(2);
-  data_ind->Fit("myfunc2", "R");
+  data_ind->Fit("myfunc2", "E");
   data_ind->Draw("AP");
   data_ind->SetLineColor(4);
   data_ind->SetMarkerColor(4);
@@ -109,7 +109,7 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto.txt",
   data_res->GetXaxis()->SetTitle("Frequenza, Hz");
   data_res->GetYaxis()->SetTitle("Ampiezza, V");
   canv->cd(3);
-  data_res->Fit("myfunc3", "R");
+  data_res->Fit("myfunc3", "E");
   data_res->Draw("AP");
   data_res->SetLineColor(4);
   data_res->SetMarkerColor(4);
@@ -117,9 +117,19 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto.txt",
   data_res->Write();
   data_cond->Write();
   file->Close();
-  std::cout << "La f di risonanza vale: "
-            << 1. /( 2. * TMath::Pi()) *
+  std::cout << "La f di risonanza per cond vale: "
+            << 1. / (2. * TMath::Pi()) *
                    TMath::Sqrt(1 / (res_cond->GetParameter(2) *
                                     res_cond->GetParameter(3)))
+            << "\n";
+  std::cout << "La f di risonanza per res vale: "
+            << 1. / (2. * TMath::Pi()) *
+                   TMath::Sqrt(1 / (res_res->GetParameter(2) *
+                                    res_res->GetParameter(3)))
+            << "\n";
+  std::cout << "La f di risonanza per ind vale: "
+            << 1. / (2. * TMath::Pi()) *
+                   TMath::Sqrt(1 / (res_ind->GetParameter(2) *
+                                    res_ind->GetParameter(3)))
             << "\n";
 }
