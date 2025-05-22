@@ -39,13 +39,15 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto_errors.txt",
          TString fname_res = "./nuovi_txt/V_res_1,5_auto_errors.txt",
          TString fname_ind = "./nuovi_txt/V_ind_1,5_auto_errors.txt",
          Double_t f0 = 12780, Double_t V0 = 0.75, Double_t R = 600,
-         Double_t L = 0.047, Double_t C = 3.3E-9) {
+         Double_t L = 0.036, Double_t C = 4.3E-9) {
   TFile *file = new TFile("final_data.root", "RECREATE");
   TCanvas *canv = new TCanvas("canv", "Risonanze sinusoidale", 700, 600);
   canv->Divide(2, 2);
-  TF1 *res_cond = new TF1("myfunc1", ris_sin_cond, 200, 24000, 4);
-  TF1 *res_ind = new TF1("myfunc2", ris_sin_ind, 200, 24000, 4);
-  TF1 *res_res = new TF1("myfunc3", ris_sin_res, 200, 24000, 4);
+  auto xmin{10000};
+  auto xmax{15000};
+  TF1 *res_cond = new TF1("myfunc1", ris_sin_cond, xmin, xmax, 4);
+  TF1 *res_ind = new TF1("myfunc2", ris_sin_ind, xmin, xmax, 4);
+  TF1 *res_res = new TF1("myfunc3", ris_sin_res, xmin, xmax, 4);
   res_cond->SetParameter(0, V0);
   res_cond->SetParameter(1, R);
   res_cond->SetParameter(2, L);
@@ -81,7 +83,7 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto_errors.txt",
   TGraphErrors *data_ind = new TGraphErrors(fname_ind, "%lg %lg %lg");
 
   canv->cd(1);
-  data_cond->Fit("myfunc1", "E");
+  data_cond->Fit("myfunc1", "M");
   data_cond->Draw("AP");
   data_cond->SetLineColor(4);
   data_cond->SetMarkerColor(4);
@@ -93,7 +95,7 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto_errors.txt",
   data_cond->GetXaxis()->CenterTitle(true);
 
   canv->cd(2);
-  data_ind->Fit("myfunc2", "E");
+  data_ind->Fit("myfunc2", "M");
   data_ind->Draw("AP");
   data_ind->SetLineColor(4);
   data_ind->SetMarkerColor(4);
@@ -109,7 +111,7 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto_errors.txt",
   data_res->GetXaxis()->SetTitle("Frequenza, Hz");
   data_res->GetYaxis()->SetTitle("Ampiezza, V");
   canv->cd(3);
-  data_res->Fit("myfunc3", "E");
+  data_res->Fit("myfunc3", "M");
   data_res->Draw("AP");
   data_res->SetLineColor(4);
   data_res->SetMarkerColor(4);
