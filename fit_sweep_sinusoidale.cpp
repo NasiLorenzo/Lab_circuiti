@@ -9,9 +9,9 @@ Double_t ris_sin_cond(double *x, double *par) {
       par[0] /
       (TMath::Sqrt(par[1] * par[1] +
                    TMath::Power(2. * TMath::Pi() * x[0] * par[2] -
-                                    1 / (par[3] * 2. * TMath::Pi() * x[0]),
-                                2)) *
-       2. * TMath::Pi() * x[0] * par[3]);
+                                    1. / (par[3] * 2. * TMath::Pi() * x[0]),
+                                2.)) *
+       2. * TMath::Pi() * x[0] * par[3])+x[0]*par[4]+par[5];
   return res;
 }
 
@@ -21,7 +21,7 @@ Double_t ris_sin_res(double *x, double *par) {
       (TMath::Sqrt(par[1] * par[1] +
                    TMath::Power(2. * TMath::Pi() * x[0] * par[2] -
                                     1 / (par[3] * 2. * TMath::Pi() * x[0]),
-                                2)));
+                                2)))+x[0]*par[4]+par[5];
   return res;
 }
 
@@ -31,23 +31,23 @@ Double_t ris_sin_ind(double *x, double *par) {
       (TMath::Sqrt(par[1] * par[1] +
                    TMath::Power(2. * TMath::Pi() * x[0] * par[2] -
                                     1 / (par[3] * 2. * TMath::Pi() * x[0]),
-                                2)));
+                                2)))+x[0]*par[4]+par[5];
   return res;
 }
 
-void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto_errors.txt",
-         TString fname_res = "./nuovi_txt/V_res_1,5_auto_errors.txt",
-         TString fname_ind = "./nuovi_txt/V_ind_1,5_auto_errors.txt",
-         Double_t f0 = 12780, Double_t V0 = 0.75, Double_t R = 600,
+void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto_errors_red.txt",
+         TString fname_res = "./nuovi_txt/V_res_1,5_auto_errors_red.txt",
+         TString fname_ind = "./nuovi_txt/V_ind_1,5_auto_errors_red.txt",
+         Double_t f0 = 12780, Double_t V0 = 0.75, Double_t R = 800,
          Double_t L = 0.036, Double_t C = 4.3E-9) {
   TFile *file = new TFile("final_data.root", "RECREATE");
   TCanvas *canv = new TCanvas("canv", "Risonanze sinusoidale", 700, 600);
   canv->Divide(2, 2);
-  auto xmin{10000};
-  auto xmax{15000};
-  TF1 *res_cond = new TF1("myfunc1", ris_sin_cond, xmin, xmax, 4);
-  TF1 *res_ind = new TF1("myfunc2", ris_sin_ind, xmin, xmax, 4);
-  TF1 *res_res = new TF1("myfunc3", ris_sin_res, xmin, xmax, 4);
+  auto xmin{1300};
+  auto xmax{23050};
+  TF1 *res_cond = new TF1("myfunc1", ris_sin_cond, xmin, xmax, 6);
+  TF1 *res_ind = new TF1("myfunc2", ris_sin_ind, xmin, xmax, 6);
+  TF1 *res_res = new TF1("myfunc3", ris_sin_res, xmin, xmax, 6);
   res_cond->SetParameter(0, V0);
   res_cond->SetParameter(1, R);
   res_cond->SetParameter(2, L);
@@ -56,7 +56,7 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto_errors.txt",
   res_cond->SetParName(1, "Resistenza");
   res_cond->SetParName(2, "Induttanza");
   res_cond->SetParName(3, "Capacità");
-  res_cond->FixParameter(1,620.);
+  //res_cond->FixParameter(1,620.);
 
   res_ind->SetParameter(0, V0);
   res_ind->SetParameter(1, R);
@@ -66,9 +66,9 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto_errors.txt",
   res_ind->SetParName(1, "Resistenza");
   res_ind->SetParName(2, "Induttanza");
   res_ind->SetParName(3, "Capacità");
-  res_ind->FixParameter(1,620.);
+  //res_ind->FixParameter(1,620.);
 
-  res_res->SetParameter(0, V0);
+  res_res->SetParameter(0, 0.035);
   res_res->SetParameter(1, R);
   res_res->SetParameter(2, L);
   res_res->SetParameter(3, C);
@@ -76,14 +76,14 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto_errors.txt",
   res_res->SetParName(1, "Resistenza");
   res_res->SetParName(2, "Induttanza");
   res_res->SetParName(3, "Capacità");
-  res_res->FixParameter(1,620.);
+  //res_res->FixParameter(1,620.);
 
   TGraphErrors *data_cond = new TGraphErrors(fname_cond, "%lg %lg %lg");
   TGraphErrors *data_res = new TGraphErrors(fname_res, "%lg %lg %lg");
   TGraphErrors *data_ind = new TGraphErrors(fname_ind, "%lg %lg %lg");
 
   canv->cd(1);
-  data_cond->Fit("myfunc1", "M");
+  data_cond->Fit("myfunc1", "R","",xmin,xmax);
   data_cond->Draw("AP");
   data_cond->SetLineColor(4);
   data_cond->SetMarkerColor(4);
@@ -95,7 +95,7 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto_errors.txt",
   data_cond->GetXaxis()->CenterTitle(true);
 
   canv->cd(2);
-  data_ind->Fit("myfunc2", "M");
+  data_ind->Fit("myfunc2", "R","",xmin,xmax);
   data_ind->Draw("AP");
   data_ind->SetLineColor(4);
   data_ind->SetMarkerColor(4);
@@ -111,7 +111,7 @@ void fit(TString fname_cond = "./nuovi_txt/V_cond_1,5_auto_errors.txt",
   data_res->GetXaxis()->SetTitle("Frequenza, Hz");
   data_res->GetYaxis()->SetTitle("Ampiezza, V");
   canv->cd(3);
-  data_res->Fit("myfunc3", "M");
+  data_res->Fit("myfunc3","R","",xmin,xmax);
   data_res->Draw("AP");
   data_res->SetLineColor(4);
   data_res->SetMarkerColor(4);
